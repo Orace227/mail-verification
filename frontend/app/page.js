@@ -13,6 +13,8 @@ import Questions from "./components/landingpage/faq/Questions";
 import Footer from "./components/landingpage/Footer/Footer";
 import RootLayout from "./layout";
 export default function LandingPage() {
+
+  
   return (
     <>
       <RootLayout>
