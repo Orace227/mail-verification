@@ -8,13 +8,13 @@ import Banner from "./components/landingpage/banner/Banner";
 import LpHeader from "./components/landingpage/header/Header";
 import VideoSection from "./components/landingpage/VideoSection/VideoSection";
 import ServicesSection from "./components/landingpage/ServicesSection/ServicesSection";
-import Testimonial from "./components/landingpage/Testimonial/Testimonial";
+import Testimonial from "./components/landingpage/testimonial/Testimonial";
 import Questions from "./components/landingpage/faq/Questions";
-import Footer from "./components/landingpage/Footer/Footer";
+import Footer from "./components/landingpage/footer/Footer";
 import RootLayout from "./layout";
 export default function LandingPage() {
 
-  
+
   return (
     <>
       <RootLayout>
