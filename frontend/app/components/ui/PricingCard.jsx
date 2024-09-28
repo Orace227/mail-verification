@@ -7,8 +7,7 @@ const PricingCard = ({ plan, features, price, buttonText }) => {
       <div className="bg-gray-800 text-white p-6 rounded-lg shadow-lg flex flex-col justify-between h-[100%] ">
         <div>
           <h2 className="text-4xl  font-bold gazpacho  ">{plan}</h2>
-          <p className="mb-6 gazpacho">Features of Free Plan</p>
-          <ul className="mb-6">
+          <ul className="mt-5 ">
             {features.map((feature, index) => (
               <li key={index} className="flex items-center mb-2">
                 <svg

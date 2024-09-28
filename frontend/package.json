@@ -16,6 +16,7 @@
     "@reduxjs/toolkit": "^2.2.6",
     "@tabler/icons-react": "^3.7.0",
     "autoprefixer": "^10.4.19",
+    "axios": "^1.7.7",
     "clsx": "^2.1.1",
     "framer-motion": "^11.2.12",
     "mini-svg-data-uri": "^1.4.4",
@@ -28,6 +29,7 @@
     "react-redux": "^9.1.2",
     "react-select": "^5.8.0",
     "react-slick": "^0.30.2",
+    "react-syntax-highlighter": "^15.5.0",
     "sharp": "^0.33.4",
     "slick-carousel": "^1.8.1",
     "tailwind-merge": "^2.3.0"

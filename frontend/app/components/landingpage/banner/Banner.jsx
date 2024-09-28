@@ -10,7 +10,7 @@ import BannerContent from "./BannerContent";
 const Banner = () => {
   return (
     <Box mb={10} sx={{ overflow: "hidden", background: "#eaf9ff" }}>
-      <Container maxWidth="lg">
+      <Container maxWidth="xl" className="py-5">
         <BannerContent />
       </Container>
     </Box>

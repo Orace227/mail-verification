@@ -2,11 +2,10 @@
 import { pricingPlans } from "../../../store/staticData";
 import CustomTitle from "../../ui/CustomTitle";
 import PricingCard from "../../ui/PricingCard";
-import { GradientBackground } from "../../ui/gradiant-background";
 import { Container } from "@mui/material";
 export default function PricingCards() {
   return (
-    <GradientBackground>
+    <div id="pricing">
       <Container
         maxWidth="lg"
         sx={{ paddingTop: "40px", paddingBottom: "40px" }}
@@ -22,7 +21,6 @@ export default function PricingCards() {
             <CustomTitle
               title="Our Pricing"
               mainKeyword="plans"
-              description="Choose a plan that suits your needs."
               isCenter={true}
             />
             <div className="flex flex-wrap justify-center gap-8 mt-10">
@@ -40,6 +38,6 @@ export default function PricingCards() {
           </main>
         </div>
       </Container>
-    </GradientBackground>
+    </div>
   );
 }

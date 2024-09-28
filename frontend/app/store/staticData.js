@@ -138,7 +138,7 @@ export const ProductPreviewData = [
 
 export const pricingPlans = [
   {
-    plan: "Basic",
+    plan: "Free",
     features: [
       "20+ AI Document Templates",
       "Regular Support Business",
@@ -149,7 +149,7 @@ export const pricingPlans = [
     buttonText: "Get started",
   },
   {
-    plan: "Premium",
+    plan: "Gold",
     features: [
       "20+ AI Document Templates",
       "Regular Support Business",
@@ -161,7 +161,7 @@ export const pricingPlans = [
     buttonText: "Get started",
   },
   {
-    plan: "Enterprise",
+    plan: "Yearly",
     features: [
       "20+ AI Document Templates",
       "Regular Support Business",
@@ -169,8 +169,8 @@ export const pricingPlans = [
       "Live Chat Support",
       "1 Speech to Text per month",
     ],
-    price: "$99.9",
-    buttonText: "Contact us",
+    price: "$99.99",
+    buttonText: "Get started",
   },
 ];
 
@@ -335,7 +335,7 @@ export const faqs = [
       },
     ],
   },
-  
+
 ];
 
 export const logoPreviewImages = [

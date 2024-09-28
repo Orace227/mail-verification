@@ -28,8 +28,8 @@ const LpHeader = () => {
   }));
 
   //   sidebar
-  const lgUp = useMediaQuery((theme) => theme.breakpoints.up("lg"));
-  const lgDown = useMediaQuery((theme) => theme.breakpoints.down("lg"));
+  const smUp = useMediaQuery((theme) => theme.breakpoints.up("sm"));
+  const smDown = useMediaQuery((theme) => theme.breakpoints.down("sm"));
 
   const [open, setOpen] = React.useState(false);
 
@@ -47,7 +47,7 @@ const LpHeader = () => {
         <ToolbarStyled>
           <Logo />
           <Box flexGrow={1} />
-          {lgDown ? (
+          {smDown ? (
             <IconButton
               color="inherit"
               aria-label="menu"
@@ -57,9 +57,9 @@ const LpHeader = () => {
               <IconMenu2 size="20" />
             </IconButton>
           ) : null}
-          {lgUp ? (
+          {smUp ? (
             <Stack
-              spacing={4}
+              spacing={2}
               className="text-[15px]"
               direction="row"
               alignItems="center"

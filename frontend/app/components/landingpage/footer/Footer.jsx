@@ -8,31 +8,35 @@ import {
   IconBrandTwitter,
   IconBrandYoutube,
 } from "@tabler/icons-react";
+import Link from "next/link";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <Container maxWidth="lg">
-      <footer className="bg-white">
+    <footer className="bg-[#DBEAFE]">
+      <Container maxWidth="lg" className="">
         <div className="container mx-auto px-4 py-8">
           <div className="flex justify-center items-center mb-8">
             <Logo />
           </div>
           <nav className="flex justify-center font-bold space-x-6 mb-8">
-            <a href="#" className="text-gray-600 hover:text-gray-900">
+            <Link href="/terms" className="text-gray-600 hover:text-gray-900">
               Terms And Conditions
-            </a>
-            <a href="#" className="text-gray-600 hover:text-gray-900">
+            </Link>
+            <Link
+              href="/privacy-policy"
+              className="text-gray-600 hover:text-gray-900"
+            >
               Privacy Policy
-            </a>
-            <a href="#" className="text-gray-600 hover:text-gray-900">
+            </Link>
+            <Link href="#" className="text-gray-600 hover:text-gray-900">
               Document
-            </a>
+            </Link>
           </nav>
           <hr className="border-gray-200 mb-8" />
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-500 text-sm mb-4 md:mb-0">
+            <p className="text-black text-sm mb-4 md:mb-0">
               © {currentYear} Logo Pvt. Ltd. All Rights Reserved.
             </p>
             <div className="flex space-x-4">
@@ -67,8 +71,8 @@ const Footer = () => {
             </div>
           </div>
         </div>
-      </footer>
-    </Container>
+      </Container>
+    </footer>
   );
 };
 

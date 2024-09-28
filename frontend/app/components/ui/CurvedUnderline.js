@@ -4,7 +4,7 @@ import React from "react";
 const CurvedUnderline = ({ mainKeyword }) => {
   return (
     <div className="relative inline-block">
-      <span className="text-black">{mainKeyword}</span>
+      <span className="">{mainKeyword}</span>
       <svg
         className="absolute left-0 -bottom-1 w-full h-2 "
         viewBox="0 0 100 20"

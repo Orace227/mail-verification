@@ -11,6 +11,7 @@ import ServicesSection from "./components/landingpage/ServicesSection/ServicesSe
 import Testimonial from "./components/landingpage/testimonial/Testimonial";
 import Questions from "./components/landingpage/faq/Questions";
 import Footer from "./components/landingpage/footer/Footer";
+import PricingCards from "./components/landingpage/pricingCards/PricingCards";
 import RootLayout from "./layout";
 export default function LandingPage() {
 
@@ -22,6 +23,7 @@ export default function LandingPage() {
         <Banner />
         <VideoSection />
         <ServicesSection />
+        <PricingCards />
         <Testimonial />
         <Questions />
         <Footer />

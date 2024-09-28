@@ -15,24 +15,33 @@ const MobileSidebar = () => {
       </Box>
       <Box p={3} sx={{ zIndex: "50" }}>
         <Stack direction="column" spacing={2}>
-          <Link href="/StepperForm" className="text-black hover:font-bold">
+          <Link
+            href="/about-us"
+            className="text-black hover:bg-[#31B3FF] p-2 rounded-lg hover:text-white font-bold"
+          >
             About Us
           </Link>
-          <Link href="/StepperForm" className="text-black hover:font-bold">
+          <Link
+            href="/#pricing"
+            className="text-black hover:bg-[#31B3FF] p-2 rounded-lg hover:text-white font-bold"
+          >
             Price
           </Link>
-          <Link href="/StepperForm" className="text-black hover:font-bold">
+          <Link
+            href="/"
+            className="text-black hover:bg-[#31B3FF] p-2 rounded-lg hover:text-white font-bold"
+          >
             Blog
           </Link>
-          <Link href="/StepperForm" className="text-black hover:font-bold">
-            Contact Us
-          </Link>
-          <Link href="/StepperForm" className="text-black hover:font-bold">
-            Log In
-          </Link>
-          <Link href="/StepperForm" className="text-black hover:font-bold">
-            Sign Up
-          </Link>
+
+          <div className="">
+            <Link href="/" className="text-black font-bold mr-2">
+              <Button className="hover:bg-[#31B3FF]"> Log In</Button>
+            </Link>
+            <Link href="/" className="text-black font-bold">
+              <Button className="hover:bg-[#31B3FF]">Sign Up</Button>
+            </Link>
+          </div>
         </Stack>
       </Box>
     </>
