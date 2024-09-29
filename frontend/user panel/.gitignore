@@ -11,6 +11,8 @@ node_modules
 public.pem
 private.pem
 
+.env
+
 dist
 dist-ssr
 .vscode
