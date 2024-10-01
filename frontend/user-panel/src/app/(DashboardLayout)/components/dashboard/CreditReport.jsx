@@ -5,14 +5,18 @@ import { useTheme } from '@mui/material/styles';
 import dayjs from 'dayjs';
 import 'dayjs/locale/en-in'; // Import Indian locale for dayjs
 
-import { Box, MenuItem, Select, FormControl, InputLabel, Typography } from '@mui/material';
+import { Box, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import CustomTextField from '../forms/theme-elements/CustomTextField';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFnsV3';
 import isBetween from 'dayjs/plugin/isBetween'; // Import the plugin
 import DashboardCard from '../shared/DashboardCard';
+import utc from 'dayjs/plugin/utc'; // Required by the timezone plugin
+import timezone from 'dayjs/plugin/timezone';
 
+dayjs.extend(utc); // Make sure to extend UTC
+dayjs.extend(timezone);
 dayjs.extend(isBetween); // Extend dayjs with the isBetween plugin
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
@@ -23,74 +27,94 @@ const CreditReport = () => {
   const [startDate, setStartDate] = React.useState(new Date());
   const [endDate, setEndDate] = React.useState(new Date());
 
+  // Get current date and timezone
+  const today = dayjs().utc().startOf('day').format('YYYY-MM-DDTHH:mm:ss[Z]');
+  console.log(today);
+
+  const yesterday = dayjs()
+    .utc()
+    .startOf('day')
+    .subtract(1, 'day')
+    .format('YYYY-MM-DDTHH:mm:ss[Z]');
+
   const data = {
     yearly: {
       categories: [
-        '01/01/2024',
-        '01/02/2024',
-        '01/03/2024',
-        '01/04/2024',
-        '01/05/2024',
-        '01/06/2024',
-        '01/07/2024',
-        '01/08/2024',
-        '01/09/2024',
-        '01/10/2024',
-        '01/11/2024',
-        '01/12/2024',
+        '2024-01-01T00:00:00Z',
+        '2024-01-02T00:00:00Z',
+        '2024-01-03T00:00:00Z',
+        '2024-01-04T00:00:00Z',
+        '2024-01-05T00:00:00Z',
+        '2024-01-06T00:00:00Z',
+        '2024-01-07T00:00:00Z',
+        '2024-01-08T00:00:00Z',
+        '2024-01-09T00:00:00Z',
+        '2024-01-10T00:00:00Z',
+        '2024-01-11T00:00:00Z',
+        '2024-01-12T00:00:00Z',
       ],
       seriesData: [10, 30, 20, 50, 40, 60, 70, 90, 80, 100, 110, 120],
     },
     monthly: {
       categories: [
-        '10/01/2024',
-        '10/02/2024',
-        '10/03/2024',
-        '10/04/2024',
-        '10/05/2024',
-        '10/06/2024',
-        '10/07/2024',
-        '10/08/2024',
-        '10/09/2024',
-        '10/10/2024',
+        '2024-10-01T00:00:00Z',
+        '2024-10-02T00:00:00Z',
+        '2024-10-03T00:00:00Z',
+        '2024-10-04T00:00:00Z',
+        '2024-10-05T00:00:00Z',
+        '2024-10-06T00:00:00Z',
+        '2024-10-07T00:00:00Z',
+        '2024-10-08T00:00:00Z',
+        '2024-10-09T00:00:00Z',
+        '2024-10-10T00:00:00Z',
       ],
       seriesData: [10, 15, 20, 25, 30, 35, 40, 45, 50, 55],
     },
     custom: {
       categories: [
-        '09/01/2024',
-        '09/05/2024',
-        '09/10/2024',
-        '09/15/2024',
-        '09/20/2024',
-        '09/25/2024',
-        '09/30/2024',
+        '2024-09-01T00:00:00Z', // Ensure proper ISO 8601 format with UTC (Z at the end)
+        '2024-09-05T00:00:00Z',
+        '2024-09-10T00:00:00Z',
+        '2024-09-15T00:00:00Z',
+        '2024-09-20T00:00:00Z',
+        '2024-09-25T00:00:00Z',
+        '2024-09-30T00:00:00Z',
       ],
       seriesData: [5, 15, 25, 35, 45, 55, 65],
     },
+    today: {
+      categories: [today],
+      seriesData: [75], // Example data for today
+    },
+    yesterday: {
+      categories: [yesterday],
+      seriesData: [50], // Example data for yesterday
+    },
   };
+
+  // Filter custom data based on start and end dates
   const filterCustomData = () => {
     const selectedData = data[filter];
     const filteredCategories = [];
     const filteredSeriesData = [];
 
-    const start = dayjs(startDate);
-    const end = dayjs(endDate);
+    const start = dayjs(startDate).utc(); // Ensure consistent UTC handling
+    const end = dayjs(endDate).utc();
 
     // Loop through the categories and check if they fall within the selected range
     selectedData.categories.forEach((category, index) => {
-      const categoryDate = dayjs(category, 'MM/DD/YYYY'); // Ensure proper parsing
-      console.log(categoryDate);
-      // Use isBetween with correct parameters
-      if (categoryDate?.isBetween(start, end, null, '[]')) {
+      const categoryDate = dayjs(category, 'MM/DD/YYYY').utc(); // Parse categories as UTC
+      if (categoryDate.isBetween(start, end, null, '[]')) {
         filteredCategories.push(category);
         filteredSeriesData.push(selectedData.seriesData[index]);
       }
     });
+    console.log({ filteredCategories, filteredSeriesData });
 
     return { filteredCategories, filteredSeriesData };
   };
 
+  // Chart options
   const optionsgredientchart = {
     chart: {
       height: 350,
@@ -124,13 +148,15 @@ const CreditReport = () => {
     grid: { show: false },
   };
 
+  // Series data
   const seriesgredientchart = [
     {
-      name: 'Likes',
+      name: 'Credit Used',
       data: filter === 'custom' ? filterCustomData().filteredSeriesData : data[filter].seriesData,
     },
   ];
 
+  // Handle filter change
   const handleFilterChange = (event) => setFilter(event.target.value);
 
   return (
@@ -148,6 +174,8 @@ const CreditReport = () => {
             <MenuItem value="yearly">Yearly</MenuItem>
             <MenuItem value="monthly">Monthly</MenuItem>
             <MenuItem value="custom">Custom</MenuItem>
+            <MenuItem value="today">Today</MenuItem>
+            <MenuItem value="yesterday">Yesterday</MenuItem>
           </Select>
 
           {filter === 'custom' && (
