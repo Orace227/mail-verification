@@ -23,46 +23,44 @@ const Menuitems = [
 
   {
     navlabel: true,
-    subheader: "Billing",
+    subheader: "Subscription",
   },
 
   {
     id: uniqueId(),
-    title: "Invoice",
+    title: "Plans & Upgrade",
     icon: IconBrandPaypal,
-    href: "/Invoice",
+    href: "/Plans-and-Upgrade",
   },
-
-
   {
     navlabel: true,
-    subheader: "Support",
-  },
-  { 
-    id: uniqueId(),
-    title: "Support",
-    icon: IconHelp,
-    href: "/Support",
-  },
-
-  {
-    navlabel: true,
-    subheader: "Contact",
+    subheader: "Develper",
   },
   {
-
     id: uniqueId(),
-    title: "Send a mail",
+    title: "My APIs",
     icon: IconHelp,
-    href: "mailto:support@commerciax.com",
+    href: "/myApis",
   },
-  {
 
-    id: uniqueId(),
-    title: "Make a call",
-    icon: IconHelp,
-    href: "tel:+919016600610",
-  },
+  // {
+  //   navlabel: true,
+  //   subheader: "Contact",
+  // },
+  // {
+
+  //   id: uniqueId(),
+  //   title: "Send a mail",
+  //   icon: IconHelp,
+  //   href: "mailto:support@commerciax.com",
+  // },
+  // {
+
+  //   id: uniqueId(),
+  //   title: "Make a call",
+  //   icon: IconHelp,
+  //   href: "tel:+919016600610",
+  // },
 ];
 
 export default Menuitems;

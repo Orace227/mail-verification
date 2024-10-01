@@ -12,7 +12,7 @@ function Page() {
         <HeaderCard title="Privacy Policy" />
 
         {/* Main Content */}
-        <div className="w-full lg:w-3/4 mx-auto space-y-8 mt-10 text-gray-800">
+        <div className="w-full lg:w-3/4 px-4 text-justify mx-auto space-y-8 mt-10 text-gray-800">
           {/* About Section */}
           <p className="text-xl font-medium">Last Updated: 05-10-2024</p>
           <p className="text-xl font-medium">

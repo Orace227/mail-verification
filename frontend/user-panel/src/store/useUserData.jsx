@@ -20,14 +20,14 @@ export const UserDataProvider = ({ children }) => {
         setUserData(user);
 
         // If no user data, redirect to login
-        if (!user) {
-          console.log('Redirecting to login...');
-          router.push('/auth/login');
-        }
+        // if (!user) {
+        //   console.log('Redirecting to login...');
+        //   router.push('/auth/login');
+        // }
       } catch (error) {
         console.error('Error fetching user data:', error);
         // Redirect to login in case of an error (e.g., unauthorized)
-        router.push('/auth/login');
+        // router.push('/auth/login');
       }
     };
 

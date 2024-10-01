@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import {
   Box,
@@ -10,7 +11,6 @@ import {
   Stack,
   Button,
 } from '@mui/material';
-import { IconArrowUpRight } from '@tabler/icons-react';
 import Image from 'next/image';
 import { useUserData } from '@/store/useUserData';
 import Link from 'next/link';
@@ -19,117 +19,151 @@ import moment from 'moment-timezone';
 const WelcomeCard = () => {
   const { userData } = useUserData();
 
+  const topcards = [
+    {
+      icon: '/images/svgs/icon-speech-bubble.svg',
+      title: 'Total Credits Available',
+      digits: '$96k',
+      bgcolor: 'success',
+    },
+    {
+      icon: '/images/svgs/icon-mailbox.svg',
+      title: 'Total Credits Used',
+      digits: '356',
+      bgcolor: 'secondary',
+    },
+  ];
+
   return (
-    <Card elevation={0} sx={{ py: 0 }}>
-      <CardContent sx={{ py: 4, px: 2 }}>
-        <Grid container>
-          <Grid item sm={12}>
-            <Box>
-              <Box
-                gap="16px"
-                mb={5}
-                sx={{
-                  display: {
-                    xs: 'block',
-                    sm: 'flex',
-                  },
-                  alignItems: 'center',
-                }}
-              >
-                <Avatar src="/images/profile/user-1.jpg" alt="img" sx={{ width: 40, height: 40 }} />
-                <Typography variant="h5" whiteSpace="nowrap">
-                  Welcome back {userData.fullName} !
-                </Typography>
-              </Box>
-              {userData.subscriptionStatus === 'unsubscribed' ? (
-                <Stack spacing={2} direction="row">
-                  {/* Plan 1 - Starter */}
-                  <Box>
-                    <Typography variant="h5" whiteSpace="nowrap">
-                      Please select a Subscription !!
-                    </Typography>
-                    <Link href="/selectSubscriptionPlan">
-                      <Button variant="contained" sx={{ marginTop: '8px' }}>
-                        Select a plan
-                      </Button>
-                    </Link>
-                  </Box>
-                </Stack>
-              ) : (
-                // </Grid>
-                <Stack
-                  spacing={2}
-                  direction="row"
-                  divider={<Divider orientation="vertical" flexItem />}
+    <Box display="flex" gap={3} flexWrap="wrap">
+      {/* Welcome and Subscription Card */}
+      <Card
+        elevation={2}
+        sx={{
+          flex: 1, // This will allow the card to take up equal space with the others
+          py: 0,
+          backgroundColor: (theme) => theme.palette.primary.light,
+          boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)', // Soft shadow for a lifted look
+          borderRadius: 2,
+        }}
+      >
+        <CardContent sx={{ py: 4, px: 2 }}>
+          <Grid container>
+            <Grid item sm={12}>
+              <Box>
+                <Box
+                  gap="16px"
+                  mb={5}
+                  sx={{
+                    display: {
+                      xs: 'block',
+                      sm: 'flex',
+                    },
+                    alignItems: 'center',
+                  }}
                 >
-                  {/* <Box>
-                    <Typography variant="h2" whiteSpace="nowrap">
-                      34
-                      {/* <span>
-                      <IconArrowUpRight width={18} color="#39B69A" />
-                    </span> 
-                    </Typography>
-                    <Typography variant="subtitle1" whiteSpace="nowrap">
-                      Total Websites
-                    </Typography>
-                  </Box> */}
-                  <Box>
-                    <Grid container spacing={2} alignItems="flex-start">
-                      {/* Left Side */}
-                      <Grid item xs={12}>
-                        <Typography variant="h2">PRO</Typography>
-                        {/* <Typography variant="subtitle1">Subscription Details</Typography> */}
-                        <Typography variant="h5" sx={{ marginTop: '5px' }}>
-                          ${' '}
-                          {userData?.paidData?.price
-                            ? (userData?.paidData?.price / 100).toFixed(2)
-                            : '0.00'}
-                          / month
-                        </Typography>
+                  <Avatar
+                    src="/images/profile/user-1.jpg"
+                    alt="img"
+                    sx={{ width: 48, height: 48 }} // Slightly larger avatar
+                  />
+                  <Typography variant="h5" whiteSpace="nowrap">
+                    Welcome back, {userData.fullName}!
+                  </Typography>
+                </Box>
 
-                        <Link
-                          href={
-                            userData?.paidData?.customerPortalUrl
-                              ? userData?.paidData?.customerPortalUrl
-                              : ''
-                          }
-                          target="_blank"
+                {userData.subscriptionStatus === 'unsubscribed' ? (
+                  <Stack spacing={2} direction="row">
+                    <Box>
+                      <Typography variant="h6">Please select a Subscription!</Typography>
+                      <Link href="/selectSubscriptionPlan" passHref>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          sx={{
+                            mt: 2,
+                            px: 4,
+                            py: 1.5,
+                            fontWeight: 600,
+                          }}
                         >
-                          <Button sx={{ marginTop: '10px' }}>Payment Dashboard</Button>
-                        </Link>
+                          Select a Plan
+                        </Button>
+                      </Link>
+                    </Box>
+                  </Stack>
+                ) : (
+                  <Stack
+                    spacing={2}
+                    direction="row"
+                    divider={<Divider orientation="vertical" flexItem />}
+                  >
+                    <Box>
+                      <Grid container spacing={2} alignItems="flex-start">
+                        {/* Left Side */}
+                        <Grid item xs={12} sm={4}>
+                          <Typography variant="h4" fontWeight={700}>
+                            PRO
+                          </Typography>
+                          <Typography variant="subtitle1" color="textSecondary">
+                            Subscription Details
+                          </Typography>
+                        </Grid>
+
+                        {/* Right Side */}
+                        <Grid item xs={12} sm={8} md={8}>
+                          <Typography variant="h5" sx={{ mt: '5px' }}>
+                            $
+                            {userData?.paidData?.price
+                              ? (userData?.paidData?.price / 100).toFixed(2)
+                              : '0.00'}{' '}
+                            / month
+                          </Typography>
+                          <Typography variant="body1" sx={{ mt: '4px' }}>
+                            Next billing date:{' '}
+                            {moment
+                              .unix(userData?.paidData?.subscriptionEndDate)
+                              .tz('Asia/Kolkata')
+                              .format('MMMM D, YYYY')}
+                          </Typography>
+                        </Grid>
                       </Grid>
-
-                      {/* Right Side */}
-                      {/* <Grid item xs={12} sm={8} md={8}> */}
-
-                      {/* <Typography variant="body1" sx={{ marginTop: '4px' }}>
-                          Trial End date:
-                          {moment
-                            .unix(userData?.paidData?.trialEndDate)
-                            .tz('Asia/Kolkata')
-                            .format('MMMM D, YYYY')}
-                        </Typography>
-                        <Typography variant="body1" sx={{ marginTop: '4px' }}>
-                          Next billing date:
-                          {moment
-                            .unix(userData?.paidData?.subscriptionEndDate)
-                            .tz('Asia/Kolkata')
-                            .format('MMMM D, YYYY')}
-                        </Typography> */}
-
-                      {/* <Typography variant="body2" >
-                        Renewal: Auto-renewal enabled
-                      </Typography> */}
-                      {/* </Grid> */}
-                    </Grid>
-                  </Box>
-                </Stack>
-              )}
-            </Box>
+                    </Box>
+                  </Stack>
+                )}
+              </Box>
+            </Grid>
           </Grid>
-        </Grid>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+
+      {/* Top Cards */}
+      {topcards.map((topcard, i) => (
+        <Card
+          key={i}
+          elevation={2}
+          sx={{
+            flex: 1, // Equal space as the Welcome Card
+            bgcolor: `${topcard.bgcolor}.light`,
+            boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)', // Add soft shadow
+            borderRadius: 2,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <CardContent className="flex flex-col justify-center  items-center">
+            <Image src={topcard.icon} alt={topcard.title} width={64} height={64} /> {/* Icon */}
+            <Typography  mt={2} variant="h6" fontWeight={600}>
+              {topcard.title}
+            </Typography>
+            <Typography  variant="h4" fontWeight={700} mt={1}>
+              {topcard.digits}
+            </Typography>
+          </CardContent>
+        </Card>
+      ))}
+    </Box>
   );
 };
 

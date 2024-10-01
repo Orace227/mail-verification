@@ -12,7 +12,7 @@ function Page() {
         <HeaderCard title="About" />
 
         {/* Main Content */}
-        <div className="w-full lg:w-3/4 mx-auto space-y-8 mt-10 text-gray-800">
+        <div className="w-full lg:w-3/4 px-4 text-justify mx-auto space-y-8 mt-10 text-gray-800">
           {/* About Section */}
           <p className="text-xl font-medium">
             In an age where email communication is pivotal to business success,
