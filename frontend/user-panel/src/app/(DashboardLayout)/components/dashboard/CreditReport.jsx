@@ -11,6 +11,7 @@ import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import CustomTextField from '../forms/theme-elements/CustomTextField';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFnsV3';
 import isBetween from 'dayjs/plugin/isBetween'; // Import the plugin
+import DashboardCard from '../shared/DashboardCard';
 
 dayjs.extend(isBetween); // Extend dayjs with the isBetween plugin
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
@@ -133,11 +134,9 @@ const CreditReport = () => {
   const handleFilterChange = (event) => setFilter(event.target.value);
 
   return (
-    <div className="">
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, justifyContent: 'space-between' }}>
-        <Typography mt={2} variant="h6" fontWeight={600}>
-          Credit usage report
-        </Typography>
+    <DashboardCard
+      title="Credit Usage Report"
+      action={
         <FormControl sx={{ minWidth: 150 }}>
           <InputLabel id="filter-select-label">Filter</InputLabel>
           <Select
@@ -188,18 +187,16 @@ const CreditReport = () => {
             </Box>
           )}
         </FormControl>
-      </Box>
-
-      <div className="w-full mx-auto">
-        <Chart
-          options={optionsgredientchart}
-          series={seriesgredientchart}
-          type="line"
-          height="300px"
-          width="98%"
-        />
-      </div>
-    </div>
+      }
+    >
+      <Chart
+        options={optionsgredientchart}
+        series={seriesgredientchart}
+        type="line"
+        height="300px"
+        width="99%"
+      />
+    </DashboardCard>
   );
 };
 
