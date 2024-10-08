@@ -6,7 +6,7 @@ import { signIn } from 'next-auth/react';
 
 const AuthSocialButtons = ({ title, callbackUrl }) => (
   <>
-    <Stack mt={3}>
+    <Stack direction="row" gap={2} mt={3}>
       <CustomSocialButton
         onClick={async () => {
           await signIn('google');
@@ -32,6 +32,32 @@ const AuthSocialButtons = ({ title, callbackUrl }) => (
           {title}{' '}
         </Box>{' '}
         Google
+      </CustomSocialButton>
+      <CustomSocialButton
+        onClick={async () => {
+          await signIn('google');
+        }}
+      >
+        <Avatar
+          src={'/images/svgs/apple-icon.svg'}
+          alt={'icon1'}
+          sx={{
+            width: 16,
+            height: 16,
+            borderRadius: 0,
+            mr: 1,
+          }}
+        />
+        <Box
+          sx={{
+            display: { xs: 'none', sm: 'flex' },
+            whiteSpace: 'nowrap',
+            mr: { sm: '3px' },
+          }}
+        >
+          {title}{' '}
+        </Box>{' '}
+        Apple
       </CustomSocialButton>
     </Stack>
   </>

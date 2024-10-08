@@ -5,7 +5,7 @@ const PageContainer = ({ title, description, children }) => (
   <HelmetProvider>
     <div>
       <Helmet>
-        <title>{title} | Neweb.ai</title>
+        <title>{title} | ProductD</title>
         <meta name="description" content={description} />
       </Helmet>
       {children}

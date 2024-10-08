@@ -84,22 +84,6 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
       ) : null}
 
       {subtext}
-      <AuthSocialButtons title="Sign in with" />
-
-      <Box mt={3}>
-        <Divider>
-          <Typography
-            component="span"
-            color="textSecondary"
-            variant="h6"
-            fontWeight="400"
-            position="relative"
-            px={2}
-          >
-            or sign in with
-          </Typography>
-        </Divider>
-      </Box>
 
       {/* <Box> */}
       <form onSubmit={formik.handleSubmit}>
@@ -152,6 +136,23 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
         </Stack>
       </form>
       {/* </Box> */}
+
+      <Box mt={3}>
+        <Divider>
+          <Typography
+            component="span"
+            color="textSecondary"
+            variant="h6"
+            fontWeight="400"
+            position="relative"
+            px={2}
+          >
+            or sign in with
+          </Typography>
+        </Divider>
+      </Box>
+      <AuthSocialButtons title="Sign in with" />
+
       {subtitle}
     </>
   );

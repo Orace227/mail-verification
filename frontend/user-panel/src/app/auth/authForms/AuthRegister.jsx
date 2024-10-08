@@ -8,7 +8,7 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import Cookies from 'js-cookie';
 import toast from 'react-hot-toast';
-import { IconButton, InputAdornment } from '@mui/material';
+import { Grid, IconButton, InputAdornment } from '@mui/material';
 import { Api, Visibility, VisibilityOff } from '@mui/icons-material';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -24,32 +24,36 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
   const router = useRouter();
 
   const initialValues = {
-    fullName: '',
-    phoneNumber: '',
+    first_name: '',
+    last_name: '',
     email: '',
     password: '',
-    location: '',
-    timezone: '',
-    activityLog: {
-      loginIp: '',
-    },
+    confirm_password: '',
   };
   const [showPassword, setShowPassword] = useState(false);
+  const [showPassword1, setShowPassword1] = useState(false);
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
 
+  const handleClickShowPassword1 = () => {
+    setShowPassword1(!showPassword1);
+  };
+
   const { setUserData } = useUserData();
 
   const validationSchema = yup.object({
-    fullName: yup.string().required('Full name is required'),
+    first_name: yup.string().required('First Name is required'),
+    last_name: yup.string().required('Last Name is required'),
     email: yup.string().email('Enter a valid email').required('Email is required'),
-    phoneNumber: yup
-      .string()
-      .matches(/^\d{10}$/, 'Phone number should be exactly 10 digits')
-      .required('Phone number is required'),
     password: yup
+      .string()
+      .min(8, 'Password should be of minimum 8 characters length')
+      .matches(/\d/, 'Password must contain at least one number') // Enforces at least one number
+      .matches(/[A-Z]/, 'Password must contain at least one uppercase letter') // Enforces at least one uppercase letter
+      .required('Password is required'),
+    confirm_password: yup
       .string()
       .min(8, 'Password should be of minimum 8 characters length')
       .matches(/\d/, 'Password must contain at least one number') // Enforces at least one number
@@ -74,32 +78,18 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
 
   const handleSubmit = async (values) => {
     try {
-      const userIpInfo = await getUserIpDetails();
-      values.location = `${userIpInfo.city}, ${userIpInfo.region}, ${userIpInfo.country}`;
-      values.timezone = userIpInfo.timezone;
-      values.activityLog.loginIp = userIpInfo.ip;
-
       console.log(values);
-      const res = await axios.post('/auth/signup', values);
+      const res = await axios.post('/register', values);
       console.log(res);
       if (res.status === 201) {
         // Set the token in cookies
-
-        toast.success('Congratulations!! You have successfully signed up!!', {
+        toast.success(res.data.detail, {
           icon: '🚀',
         });
-        localStorage.setItem('userData', JSON.stringify(res.data.data.user));
-
-        toast.success('Congratulations!! You have successfully signed in!!', {
-          icon: '🚀',
-        });
-        setUserData(res.data.data.user);
-        router.push('/');
       }
     } catch (error) {
-      console.log(error.response.data.error.code);
-      if (error.response.data.error.code === 11000) {
-        toast.error(`Sorry!! Your email or phone number already exist!!`);
+      if (error.response.status === 400) {
+        toast.error(`Sorry!! Your email  already exist!!`);
       } else {
         toast.error(`Sorry!! You can not successfully signed up!!`);
       }
@@ -120,52 +110,39 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
       ) : null}
 
       {subtext}
-      <AuthSocialButtons title="Sign up with" />
-
-      <Box mt={3}>
-        <Divider>
-          <Typography
-            component="span"
-            color="textSecondary"
-            variant="h6"
-            fontWeight="400"
-            position="relative"
-            px={2}
-          >
-            or sign up with
-          </Typography>
-        </Divider>
-      </Box>
 
       {/* <Box> */}
       <form onSubmit={formik.handleSubmit}>
         <Stack>
-          <Box mt="-10px">
-            <CustomFormLabel>Full Name</CustomFormLabel>
-            <CustomTextField
-              fullWidth
-              id="fullName"
-              name="fullName"
-              value={formik.values.fullName}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.fullName && Boolean(formik.errors.fullName)}
-              helperText={formik.touched.fullName && formik.errors.fullName}
-            />
-          </Box>
-          <Box mt="-10px">
-            <CustomFormLabel>Phone Number</CustomFormLabel>
-            <CustomTextField
-              fullWidth
-              id="phoneNumber"
-              name="phoneNumber"
-              value={formik.values.phoneNumber}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.phoneNumber && Boolean(formik.errors.phoneNumber)}
-              helperText={formik.touched.phoneNumber && formik.errors.phoneNumber}
-            />
-          </Box>
+          <Grid container spacing={2} sx={{ mt: '-10px' }}>
+            <Grid item xs={12} sm={6}>
+              <CustomFormLabel>First Name</CustomFormLabel>
+              <CustomTextField
+                fullWidth
+                id="first_name"
+                name="first_name"
+                value={formik.values.first_name}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.touched.first_name && Boolean(formik.errors.first_name)}
+                helperText={formik.touched.first_name && formik.errors.first_name}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <CustomFormLabel>Last Name</CustomFormLabel>
+              <CustomTextField
+                fullWidth
+                id="last_name"
+                name="last_name"
+                value={formik.values.last_name}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.touched.last_name && Boolean(formik.errors.last_name)}
+                helperText={formik.touched.last_name && formik.errors.last_name}
+              />
+            </Grid>
+          </Grid>
 
           <Box mt="-10px">
             <CustomFormLabel>Email Address</CustomFormLabel>
@@ -180,7 +157,7 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
               helperText={formik.touched.email && formik.errors.email}
             />
           </Box>
-          <Box mb={3}>
+          <Box mt="-10px">
             <CustomFormLabel>Password</CustomFormLabel>
             <CustomTextField
               fullWidth
@@ -207,6 +184,33 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
               }}
             />
           </Box>
+          <Box mb={3}>
+            <CustomFormLabel>Re-Password</CustomFormLabel>
+            <CustomTextField
+              fullWidth
+              id="confirm_password"
+              name="confirm_password"
+              type={showPassword1 ? 'text' : 'password'}
+              value={formik.values.confirm_password}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.confirm_password && Boolean(formik.errors.confirm_password)}
+              helperText={formik.touched.confirm_password && formik.errors.confirm_password}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword1}
+                      edge="end"
+                    >
+                      {showPassword1 ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Box>
           {/* <Stack direction="row"> */}
           <Button variant="contained" type="submit">
             Sign up
@@ -214,6 +218,23 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
           {/* </Stack> */}
         </Stack>
       </form>
+
+      <Box mt={3}>
+        <Divider>
+          <Typography
+            component="span"
+            color="textSecondary"
+            variant="h6"
+            fontWeight="400"
+            position="relative"
+            px={2}
+          >
+            or sign up with
+          </Typography>
+        </Divider>
+      </Box>
+      <AuthSocialButtons title="Sign up with" />
+
       {/* </Box> */}
       {subtitle}
     </>
