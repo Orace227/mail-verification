@@ -91,11 +91,7 @@ const Page = () => {
     },
   ];
   return (
-    <DashboardCard
-      title="My APIs"
-      s
-      action={<Button variant="contained">Create API</Button>}
-    >
+    <DashboardCard title="My APIs" action={<Button variant="contained">Create API</Button>}>
       <TableContainer>
         <Table
           aria-label="My APIs"
