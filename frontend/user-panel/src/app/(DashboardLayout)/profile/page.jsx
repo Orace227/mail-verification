@@ -1,6 +1,7 @@
 'use client';
 import Grid from '@mui/material/Grid';
 import ProfileBanner from '../components/profile/ProfileBanner';
+import ChangePassword from '../components/profile/ChangePassword';
 import IntroCard from '../components/profile/IntroCard';
 import PageContainer from '../components/container/PageContainer';
 import { useRouter } from 'next/navigation';
@@ -44,8 +45,11 @@ const UserProfile = () => {
           <ProfileBanner userData={userData} />
         </Grid>
 
-        <Grid item sm={12}>
+        <Grid item sm={6}>
           <IntroCard userData={userData} />
+        </Grid>
+        <Grid item sm={6}>
+          <ChangePassword userData={userData} />
         </Grid>
       </Grid>
     </PageContainer>
