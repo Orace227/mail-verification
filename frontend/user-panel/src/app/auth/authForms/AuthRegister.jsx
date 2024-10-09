@@ -8,7 +8,7 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import Cookies from 'js-cookie';
 import toast from 'react-hot-toast';
-import { Grid, IconButton, InputAdornment } from '@mui/material';
+import { Grid, IconButton, InputAdornment, CircularProgress } from '@mui/material';
 import { Api, Visibility, VisibilityOff } from '@mui/icons-material';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -17,8 +17,6 @@ import CustomTextField from '@/app/(DashboardLayout)/components/forms/theme-elem
 import CustomFormLabel from '@/app/(DashboardLayout)/components/forms/theme-elements/CustomFormLabel';
 import { useRouter } from 'next/navigation';
 import { useUserData } from '@/store/useUserData';
-
-// import { encryptData } from "@/utils/encryption/encryption";
 
 const AuthRegister = ({ title, subtitle, subtext }) => {
   const router = useRouter();
@@ -32,6 +30,7 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
   };
   const [showPassword, setShowPassword] = useState(false);
   const [showPassword1, setShowPassword1] = useState(false);
+  const [loading, setLoading] = useState(false); // Loader state
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -61,38 +60,25 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
       .required('Password is required'),
   });
 
-  // get user's ip address
-  async function getUserIpDetails() {
-    try {
-      const response = await fetch(`https://ipinfo.io?token=${process.env.NEXT_PUBLIC_API_TOKEN}`);
-      const data = await response.json();
-
-      console.log("User's IP Address:", data?.ip);
-      console.log('Location:', `${data?.city}, ${data?.region}, ${data?.country}`);
-      console.log('Timezone:', data.timezone);
-      return data; // Return the data if you need to use it elsewhere
-    } catch (error) {
-      console.error('Error fetching IP details:', error);
-    }
-  }
-
   const handleSubmit = async (values) => {
+    setLoading(true); // Start the loader
     try {
       console.log(values);
-      const res = await axios.post('/register', values);
+      const res = await axios.post('/register/', values);
       console.log(res);
       if (res.status === 201) {
-        // Set the token in cookies
         toast.success(res.data.detail, {
           icon: '🚀',
         });
       }
     } catch (error) {
       if (error.response.status === 400) {
-        toast.error(`Sorry!! Your email  already exist!!`);
+        toast.error(`Sorry!! Your email already exists!!`);
       } else {
-        toast.error(`Sorry!! You can not successfully signed up!!`);
+        toast.error(`Sorry!! You couldn't sign up successfully!!`);
       }
+    } finally {
+      setLoading(false); // Stop the loader
     }
   };
 
@@ -101,6 +87,7 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
     validationSchema,
     onSubmit: handleSubmit,
   });
+
   return (
     <>
       {title ? (
@@ -111,7 +98,6 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
 
       {subtext}
 
-      {/* <Box> */}
       <form onSubmit={formik.handleSubmit}>
         <Stack>
           <Grid container spacing={2} sx={{ mt: '-10px' }}>
@@ -157,6 +143,7 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
               helperText={formik.touched.email && formik.errors.email}
             />
           </Box>
+
           <Box mt="-10px">
             <CustomFormLabel>Password</CustomFormLabel>
             <CustomTextField
@@ -184,6 +171,7 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
               }}
             />
           </Box>
+
           <Box mb={3}>
             <CustomFormLabel>Re-Password</CustomFormLabel>
             <CustomTextField
@@ -211,11 +199,14 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
               }}
             />
           </Box>
-          {/* <Stack direction="row"> */}
-          <Button variant="contained" type="submit">
-            Sign up
+
+          <Button
+            variant="contained"
+            type="submit"
+            disabled={loading} // Disable the button during loading
+          >
+            {loading ? <CircularProgress size={24} /> : 'Sign up'} {/* Show loader when loading */}
           </Button>
-          {/* </Stack> */}
         </Stack>
       </form>
 
@@ -235,7 +226,6 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
       </Box>
       <AuthSocialButtons title="Sign up with" />
 
-      {/* </Box> */}
       {subtitle}
     </>
   );

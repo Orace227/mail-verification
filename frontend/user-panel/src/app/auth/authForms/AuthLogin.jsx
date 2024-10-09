@@ -12,8 +12,8 @@ import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-
-import { IconButton, InputAdornment } from '@mui/material';
+import Cookies from 'js-cookie';
+import { IconButton, InputAdornment, CircularProgress } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useUserData } from '@/store/useUserData';
 
@@ -24,48 +24,65 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
   };
 
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false); // Loader state
   const { setUserData } = useUserData();
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
+
   const router = useRouter();
+
   const validationSchema = yup.object({
     email: yup.string().email('Enter a valid email').required('Email is required'),
     password: yup
       .string()
       .min(8, 'Password should be of minimum 8 characters length')
-      .matches(/\d/, 'Password must contain at least one number') // Enforces at least one number
-      .matches(/[A-Z]/, 'Password must contain at least one uppercase letter') // Enforces at least one uppercase letter
+      .matches(/\d/, 'Password must contain at least one number')
+      .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
       .required('Password is required'),
   });
 
   const handleSubmit = async (values) => {
+    setLoading(true); // Set loader to true when submitting
     try {
-      console.log(values);
-      const res = await axios.post('/auth/login', values);
+      const res = await axios.post('/login/', values);
       if (res.status === 200) {
-        console.log(res.data.data.user);
-        // Set the token in cookies
-        localStorage.setItem('userData', JSON.stringify(res.data.data.user));
-
         toast.success('Congratulations!! You have successfully signed in!!', {
           icon: '🚀',
         });
-        setUserData(res.data.data.user);
 
-        router.push('/');
+        if (process.env.NODE_ENV === 'production') {
+          Cookies.set('refresh', res.data.refresh, { expires: 15 });
+          Cookies.set('access', res.data.access, { expires: 15 });
+        } else {
+          Cookies.set('refresh', res.data.refresh, { expires: 15 });
+          Cookies.set('access', res.data.access, { expires: 15 });
+        }
+
+        const profileEes = await axios.get('/user/profile/', {
+          headers: {
+            Authorization: `Bearer ${res.data.access}`,
+          },
+        });
+        if (profileEes.data[0].id) {
+          router.push('/');
+        } else {
+          router.push('/auth/completeProfile');
+        }
       }
     } catch (error) {
-      console.log(error.response.data.error.code);
+      console.log(error);
       if (error.response.status === 400) {
-        toast.error(`Sorry!! Your email or phone number already exist!!`);
+        toast.error(`Sorry!! Your email already exist!!`);
       }
       if (error.response.status === 401) {
         toast.error(`Please check your Email or password!!`);
       } else {
-        toast.error(`Sorry!! You can not successfully signed up!!`);
+        toast.error(`Sorry!! You could not successfully sign in!!`);
       }
+    } finally {
+      setLoading(false); // Reset loader to false after submission
     }
   };
 
@@ -74,6 +91,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
     validationSchema,
     onSubmit: handleSubmit,
   });
+
   return (
     <>
       <Toaster />
@@ -85,7 +103,6 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
 
       {subtext}
 
-      {/* <Box> */}
       <form onSubmit={formik.handleSubmit}>
         <Stack>
           <Box mt="-10px">
@@ -128,14 +145,16 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
               }}
             />
           </Box>
-          {/* <Stack direction="row"> */}
-          <Button variant="contained" type="submit">
-            Sign in
+          <Button
+            variant="contained"
+            type="submit"
+            disabled={loading} // Disable button while loading
+            startIcon={loading ? <CircularProgress size={20} /> : null} // Show loader in button
+          >
+            {loading ? 'Signing in...' : 'Sign in'}
           </Button>
-          {/* </Stack> */}
         </Stack>
       </form>
-      {/* </Box> */}
 
       <Box mt={3}>
         <Divider>

@@ -5,7 +5,9 @@ import ChildCard from '../shared/ChildCard';
 import {
   IconBriefcase,
   IconDeviceDesktop,
+  IconGenderEpicene,
   IconMail,
+  IconMan,
   IconMapPin,
   IconPhone,
 } from '@tabler/icons-react';
@@ -24,12 +26,20 @@ const IntroCard = ({ userData }) => (
       <Typography variant="h6">Sir, P P Institute Of Science</Typography>
     </Stack> */}
     <Stack direction="row" gap={2} alignItems="center" mb={3}>
+      <IconMan size="21" />
+      <Typography variant="h6">{userData.gender}</Typography>
+    </Stack>
+    <Stack direction="row" gap={2} alignItems="center" mb={3}>
       <IconMail size="21" />
       <Typography variant="h6">{userData.email}</Typography>
     </Stack>
     <Stack direction="row" gap={2} alignItems="center" mb={3}>
       <IconPhone size="21" />
-      <Typography variant="h6">+91 {userData.phoneNumber}</Typography>
+      <Typography variant="h6">{userData.phone_number}</Typography>
+    </Stack>
+    <Stack direction="row" gap={2} alignItems="center" mb={3}>
+      <IconDeviceDesktop size="21" />
+      <Typography variant="h6">{userData.website}</Typography>
     </Stack>
     {/* <Stack direction="row" gap={2} alignItems="center" mb={1}>
       <IconMapPin size="21" />

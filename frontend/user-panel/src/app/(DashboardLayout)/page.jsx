@@ -6,8 +6,10 @@ import CreditReport from '@/app/(DashboardLayout)/components/dashboard/CreditRep
 import ProductPerformances from '@/app/(DashboardLayout)/components/dashboard/ProductPerformances';
 import WelcomeCard from './components/dashboard/WelcomeCard';
 import PageContainer from './components/container/PageContainer';
+import { useUserData } from '@/store/useUserData';
 
 export default function Dashboard() {
+  useUserData();
   return (
     <PageContainer title="Dashboard" description="this is Dashboard">
       <Box mt={2}>

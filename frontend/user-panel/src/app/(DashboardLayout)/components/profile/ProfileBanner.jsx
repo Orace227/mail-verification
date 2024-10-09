@@ -111,7 +111,11 @@ const ProfileBanner = ({ userData }) => {
               <Box>
                 <ProfileImage>
                   <Avatar
-                    src={'/images/profile/user-1.jpg'}
+                    src={
+                      userData.gender === 'male'
+                        ? '/images/profile/user-1.jpg'
+                        : '/images/profile/user-9.jpg'
+                    }
                     alt="profileImage"
                     sx={{
                       borderRadius: '50%',
@@ -125,9 +129,9 @@ const ProfileBanner = ({ userData }) => {
                   <Typography fontWeight={600} variant="h5">
                     {userData.fullName}
                   </Typography>
-                  {/* <Typography color="textSecondary" variant="h6" mt="4px" fontWeight={400}>
-                    Commerciax Infotech
-                  </Typography> */}
+                  <Typography color="textSecondary" variant="h6" mt="4px" fontWeight={400}>
+                    {userData.company_name}
+                  </Typography>
                 </Box>
               </Box>
             </Box>
@@ -146,7 +150,7 @@ const ProfileBanner = ({ userData }) => {
               },
             }}
           >
-            <Stack direction={'row'} gap={2} alignItems="center" justifyContent="center" my={2}>
+            {/* <Stack direction={'row'} gap={2} alignItems="center" justifyContent="center" my={2}>
               <Link href="mailto:support@commerciax.com">
                 <Button color="primary" variant="contained">
                   <IconHelp style={{ marginRight: '8px' }} />
@@ -159,7 +163,7 @@ const ProfileBanner = ({ userData }) => {
                   Make a Call
                 </Button>
               </Link>
-            </Stack>
+            </Stack> */}
           </Grid>
         </Grid>
       </BlankCard>
