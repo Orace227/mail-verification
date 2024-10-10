@@ -11,6 +11,7 @@ import { useUserData } from '@/store/useUserData';
 import { signOut } from 'next-auth/react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
 
 export const Profile = () => {
   const customizer = useSelector((state) => state.customizer);
@@ -20,12 +21,12 @@ export const Profile = () => {
   const router = useRouter();
 
   const handleLogout = async () => {
-    await signOut('google');
-    const res = await axios.post('/auth/logout');
-    localStorage.removeItem('userData');
-    if (res.statusCode === 200) {
-      router.push('/auth/login');
-    }
+    // await signOut('google');
+    // const res = await axios.post('/auth/logout');
+    // localStorage.removeItem('userData');
+    Cookies.remove('access');
+    Cookies.remove('refresh');
+    router.push('/auth/login');
   };
 
   return (

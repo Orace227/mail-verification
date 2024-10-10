@@ -13,8 +13,17 @@ import Questions from "./components/landingpage/faq/Questions";
 import Footer from "./components/landingpage/footer/Footer";
 import PricingCards from "./components/landingpage/pricingCards/PricingCards";
 import RootLayout from "./layout";
+import axios from "axios";
 export default function LandingPage() {
 
+  if (process.env.NODE_ENV === 'production') {
+    // for production
+    axios.defaults.baseURL = process.env.NEXT_PUBLIC_PROD_AXIOS_URL;
+  } else {
+    // for local
+    axios.defaults.baseURL = process.env.NEXT_PUBLIC_AXIOS_URL;
+  }
+  axios.defaults.withCredentials = true;
 
   return (
     <>

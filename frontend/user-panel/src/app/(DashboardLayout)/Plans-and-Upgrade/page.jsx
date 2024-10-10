@@ -9,31 +9,23 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
+  Grid,
+  Divider,
 } from '@mui/material';
 
 import SupportIcon from '@mui/icons-material/Support';
 import { EmailOutlined, KeyOutlined, PeopleAltOutlined } from '@mui/icons-material';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import { useUserData } from '@/store/useUserData';
+import Link from 'next/link';
+import PricingCard from './PricingCard';
+
 export default function SubscriptionManagement() {
   const [selectedPlan, setSelectedPlan] = useState('free');
   const [subscription, setSubscription] = useState([]);
   const [availablePlans, setAvailablePlans] = useState([]);
-
-  const plans = [
-    { name: 'free', price: '', emailValidations: '100 Email Validations / month' },
-    { name: 'small', price: '$9.99 / month', emailValidations: '5,000 Email Validations / month' },
-    {
-      name: 'medium',
-      price: '$34.99 / month',
-      emailValidations: '25,000 Email Validations / month',
-    },
-    {
-      name: 'large',
-      price: '$94.99 / month',
-      emailValidations: '100,000 Email Validations / month',
-    },
-  ];
+  const { userData } = useUserData();
 
   useEffect(() => {
     const fetchSubscription = async () => {
@@ -183,65 +175,25 @@ export default function SubscriptionManagement() {
         </Card>
       )}
       {/* Available Plans Card */}
-      <Card sx={{ backgroundColor: '#253662', boxShadow: 3, borderRadius: '10px' }}>
-        <CardHeader
-          title={
-            <Typography variant="h6" fontWeight="bold">
-              Available Plans
-            </Typography>
-          }
-        />
-        <CardContent>
-          {availablePlans && availablePlans.length > 0 ? (
-            <>
-              <RadioGroup value={selectedPlan} onChange={(e) => setSelectedPlan(e.target.value)}>
-                {availablePlans.map((plan) => (
-                  <div key={plan.name} className="flex items-center space-x-4 space-y-4 py-2">
-                    <FormControlLabel
-                      value={plan.name}
-                      control={<Radio />}
-                      label={
-                        <div className="flex justify-between w-full items-center">
-                          <Typography variant="body1" fontWeight="bold">
-                            {plan.name.charAt(0).toUpperCase() + plan.name.slice(1)}
-                          </Typography>
-                          <Typography variant="body1" fontWeight="bold">
-                            {plan.price}
-                          </Typography>
-                        </div>
-                      }
-                    />
-                    <div className="flex-grow text-right">
-                      <Typography variant="body2" color="body2">
-                        {plan.emailValidations}
-                      </Typography>
-                    </div>
-                  </div>
-                ))}
-              </RadioGroup>
-              <Button
-                variant="contained"
-                color="primary"
-                className="mt-6 w-full sm:w-auto"
-                sx={{
-                  textTransform: 'none',
-                  padding: '10px 20px',
-                  borderRadius: '8px',
-                  boxShadow: '0 3px 6px rgba(0,0,0,0.1)',
-                  '&:hover': { backgroundColor: '#1565c0' },
-                }}
-              >
-                Save
-              </Button>
-              <Typography variant="body2" color="text.secondary" className="pt-2">
-                All prices excl. VAT
-              </Typography>
-            </>
-          ) : (
-            <Typography variant="body2">No plans available.</Typography>
-          )}
-        </CardContent>
-      </Card>
+      <Grid container spacing={3}>
+        {availablePlans && availablePlans.length > 0 ? (
+          availablePlans.map((plan, index) => (
+            <Grid item xs={12} sm={6} md={4} key={index}>
+              <PricingCard
+                id={plan.id}
+                plan={plan.name.charAt(0).toUpperCase() + plan.name.slice(1)}
+                price={plan.price}
+                features={Object.values(plan.features)}
+                priceSlogan={plan.duration === 'monthly' ? 'per month' : 'per year'}
+                buttonText="Select Plan"
+                paymentLink="/checkout" // Example link, modify based on your logic
+              />
+            </Grid>
+          ))
+        ) : (
+          <p>No plans available</p>
+        )}
+      </Grid>
     </div>
   );
 }

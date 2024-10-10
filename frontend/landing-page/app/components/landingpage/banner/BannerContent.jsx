@@ -13,17 +13,31 @@ import { IconLoader, IconSend2 } from "@tabler/icons-react";
 const BannerContent = () => {
   const [apiResponse, setApiResponse] = useState(null);
   const [showLoader, setShowLoader] = useState(false);
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
 
+  const validateEmail = (email) => {
+    // Basic email validation
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
   const fetchEmailData = async () => {
     try {
+      if (!validateEmail(email)) {
+        setError("Please enter a valid email address.");
+        return;
+      }
       setShowLoader(true);
-      const res = await axios.get("https://jsonplaceholder.typicode.com/posts");
+      const res = await axios.post("/check/email-checker/", { email });
       if (res.data) {
         setApiResponse(res.data);
         setShowLoader(false);
       }
     } catch (error) {
       console.log(error);
+      setShowLoader(false);
+    } finally {
+      setShowLoader(false);
     }
   };
 
@@ -95,12 +109,16 @@ const BannerContent = () => {
             >
               🎉 try it now
             </Typography>
-            <div className="relative flex justify-center items-center">
+            <div className="relative flex justify-center ">
               <TextField
                 type="email"
                 placeholder="Someone@gmail.com"
                 variant="outlined"
                 size="medium"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                }}
                 fullWidth
                 InputProps={{
                   startAdornment: (
@@ -122,6 +140,9 @@ const BannerContent = () => {
                 )}
               </button>
             </div>
+            {error && (
+              <p className="text-red-500 text-sm mt-2 text-left">{error}</p>
+            )}
             <p className="">
               Enter an email address to perform verification. Check
               documentation to know more about response object properties.

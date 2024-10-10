@@ -1,7 +1,8 @@
+"use client"
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import PageContainer from '@/app/components/container/PageContainer';
+import PageContainer from '@/app/(DashboardLayout)/components/container/PageContainer';
 import Logo from '@/app/(DashboardLayout)/layout/shared/logo/Logo';
 import AuthTwoSteps from '../../authForms/AuthTwoSteps';
 import Image from 'next/image';
@@ -46,11 +47,14 @@ export default function TwoSteps() {
               }}
             >
               <Image
-                src={"/images/backgrounds/login-bg.svg"}
-                alt="bg" width={500} height={500}
+                src={'/images/backgrounds/login-bg.svg'}
+                alt="bg"
+                width={500}
+                height={500}
                 style={{
                   width: '100%',
-                  maxWidth: '500px', maxHeight: '500px',
+                  maxWidth: '500px',
+                  maxHeight: '500px',
                 }}
               />
             </Box>
@@ -72,8 +76,8 @@ export default function TwoSteps() {
             </Typography>
 
             <Typography variant="subtitle1" color="textSecondary" mt={2} mb={1}>
-              We sent a verification code to your mobile. Enter the code from the mobile in the field
-              below.
+              We sent a verification code to your mobile. Enter the code from the mobile in the
+              field below.
             </Typography>
             <Typography variant="subtitle1" fontWeight="700" mb={1}>
               ******1234
@@ -83,7 +87,5 @@ export default function TwoSteps() {
         </Grid>
       </Grid>
     </PageContainer>
-  )
-};
-
-
+  );
+}

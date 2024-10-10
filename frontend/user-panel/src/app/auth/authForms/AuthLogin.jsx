@@ -16,6 +16,7 @@ import Cookies from 'js-cookie';
 import { IconButton, InputAdornment, CircularProgress } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useUserData } from '@/store/useUserData';
+import Link from 'next/link';
 
 const AuthLogin = ({ title, subtitle, subtext }) => {
   const initialValues = {
@@ -155,7 +156,19 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
           </Button>
         </Stack>
       </form>
-
+      <Stack justifyContent="end" direction="row" alignItems="center" my={2}>
+        <Typography
+          component={Link}
+          href="/auth/forgot-password"
+          fontWeight="500"
+          sx={{
+            textDecoration: 'none',
+            color: 'primary.main',
+          }}
+        >
+          Forgot Password ?
+        </Typography>
+      </Stack>
       <Box mt={3}>
         <Divider>
           <Typography

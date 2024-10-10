@@ -43,7 +43,7 @@ export const MyApp = ({ children }) => {
 
 export default function RootLayout({ children }) {
   const [loading, setLoading] = React.useState(false);
-  
+
   if (process.env.NODE_ENV === 'production') {
     // for production
     axios.defaults.baseURL = process.env.NEXT_PUBLIC_PROD_AXIOS_URL;
@@ -58,6 +58,7 @@ export default function RootLayout({ children }) {
   }, []);
   return (
     <html lang="en" suppressHydrationWarning>
+      {/* <script src="https://checkout.razorpay.com/v1/checkout.js"></script> */}
       <body>
         <Provider store={store}>
           {loading ? (

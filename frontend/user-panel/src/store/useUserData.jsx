@@ -9,37 +9,52 @@ const UserContext = createContext();
 
 // Create a context provider
 export const UserDataProvider = ({ children }) => {
-  const [userData, setUserData] = useState({});
+  const [userData, setUserData] = useState({}); // Set initial state to empty object
   const token = Cookies.get('access');
-  console.log(userData);
   const router = useRouter();
+
+  // Get the current route
+  const currentPath = window.location.pathname;
+
   useEffect(() => {
     const fetchUserData = async () => {
+      if (!token) {
+        // Check if the user is trying to access a non-auth page
+        if (!currentPath.startsWith('/auth')) {
+          console.log('Redirecting to login due to no token...');
+          router.push('/auth/login');
+        }
+        return; // Don't proceed if there is no token
+      }
+
       try {
         const { data } = await axios.get(`/user/profile/`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        setUserData(data[0]);
 
-        // If no user data, redirect to login
-        if (!data[0]) {
-          console.log('Redirecting to login...');
+        // Check if data exists and set it
+        if (data && data.length > 0) {
+          setUserData(data[0]);
+        } else {
+          console.log('Redirecting to login due to no user data...');
           router.push('/auth/login');
         }
       } catch (error) {
         console.error('Error fetching user data:', error);
-        // Redirect to login in case of an error (e.g., unauthorized)
-        // router.push('/auth/login');
+        if (error.response?.status === 401) {
+          router.push('/auth/login');
+        }
       }
     };
-    if (token) {
-      fetchUserData();
-    } else {
-      router.push('/auth/login');
-    }
-  }, [token]);
+
+    // Only fetch user data on client side
+    fetchUserData();
+  }, [token, router, currentPath]);
+
+  // Log userData to help with debugging
+  console.log('User Data:', userData);
 
   return <UserContext.Provider value={{ userData, setUserData }}>{children}</UserContext.Provider>;
 };

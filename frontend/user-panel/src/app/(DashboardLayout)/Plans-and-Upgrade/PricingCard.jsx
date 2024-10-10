@@ -1,15 +1,31 @@
-import React from 'react';
-// import { BorderBeam } from './border-beam';
-// import { Meteors } from './meteors';
-import Link from 'next/link';
 import { Divider } from '@mui/material';
-import { useUserData } from '@/store/useUserData';
+import axios from 'axios';
+import Cookies from 'js-cookie';
 
-const PricingCard = ({ plan, features, price, priceSlogan, buttonText, paymentLink }) => {
-  const { userData } = useUserData();
+const PricingCard = ({ id, plan, price, features, priceSlogan, buttonText, paymentLink }) => {
+  const token = Cookies.get('access');
+
+  const handlePayment = async (id) => {
+    try {
+      console.log('id', id);
+      const razorPayOrder = await axios.post(
+        '/subscribe/create-razorpay-order/',
+        { plan_id: id },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      console.log(razorPayOrder.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
-    <div className="relative flex  mt-5  w-full flex-col   justify-center overflow-hidden  rounded-2xl z-10 h-[100%]">
-      <div className=" bg-[#1b1b1b] border border-gray-600  text-white p-6 rounded-2xl shadow-lg flex flex-col justify-between h-[100%] ">
+    <div className="relative flex mt-5 w-full flex-col justify-center overflow-hidden rounded-2xl z-10 h-[100%]">
+      <div className="bg-[#1b1b1b] border border-gray-600 text-white p-6 rounded-2xl shadow-lg flex flex-col justify-between h-[100%]">
         <div>
           <h2 className="text-4xl">{plan}</h2>
           <p className="text-2xl my-3 text-[#00C8C8]">
@@ -39,21 +55,15 @@ const PricingCard = ({ plan, features, price, priceSlogan, buttonText, paymentLi
           </ul>
         </div>
         <div>
-          <Link
-            href={
-              buttonText == 'Contact Us'
-                ? 'mailto:support@commerciax.com'
-                : `${paymentLink}?prefilled_email=${userData.email}`
-            }
-            target="_blank"
+          <button
+            onClick={() => {
+              handlePayment(id);
+            }}
+            className="w-full py-2 text-lg bg-white hover:bg-[#13DEB9] text-black rounded-lg transition-colors duration-300"
           >
-            <button className="w-full py-2 text-lg bg-white hover:bg-[#13DEB9] text-black rounded-lg transition-colors duration-300">
-              {buttonText}
-            </button>
-          </Link>
+            {buttonText}
+          </button>
         </div>
-        {/* <BorderBeam size={200} duration={10} delay={7} /> */}
-        {/* <Meteors number={20} /> */}
       </div>
     </div>
   );
