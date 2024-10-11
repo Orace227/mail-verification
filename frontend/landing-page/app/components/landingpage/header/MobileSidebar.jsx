@@ -22,6 +22,12 @@ const MobileSidebar = () => {
             About Us
           </Link>
           <Link
+            href="/contact-us"
+            className="text-black hover:bg-[#31B3FF] p-2 rounded-lg hover:text-white font-bold"
+          >
+            Contact Us
+          </Link>
+          <Link
             href="/#pricing"
             className="text-black hover:bg-[#31B3FF] p-2 rounded-lg hover:text-white font-bold"
           >

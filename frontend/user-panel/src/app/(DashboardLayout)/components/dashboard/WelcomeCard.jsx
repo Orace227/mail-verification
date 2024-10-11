@@ -16,14 +16,37 @@ import { useUserData } from '@/store/useUserData';
 import Link from 'next/link';
 import moment from 'moment-timezone';
 
-const WelcomeCard = () => {
+const getPlanName = (startDate, endDate) => {
+  const start = moment(startDate);
+  const end = moment(endDate);
+
+  // Calculate the difference in months and years
+  const monthsDiff = end.diff(start, 'months');
+  const yearsDiff = end.diff(start, 'years');
+
+  if (yearsDiff >= 1) {
+    return 'Yearly';
+  } else if (monthsDiff === 1) {
+    return 'Monthly';
+  } else {
+    return 'Other Plan'; // fallback for other durations
+  }
+};
+
+const PlanName = ({ startDate, endDate }) => {
+  const planName = getPlanName(startDate, endDate);
+
+  return <span>{planName}</span>;
+};
+
+const WelcomeCard = ({ subscription }) => {
   const { userData } = useUserData();
 
   const topcards = [
     {
       icon: '/images/svgs/icon-speech-bubble.svg',
       title: 'Total Credits Available',
-      digits: '$96k',
+      digits: subscription[0]?.remaining_credits || 1000,
       bgcolor: 'success',
     },
     {
@@ -33,6 +56,7 @@ const WelcomeCard = () => {
       bgcolor: 'secondary',
     },
   ];
+  console.log(subscription);
 
   return (
     <div className="flex flex-col md:flex-row gap-5">
@@ -69,15 +93,23 @@ const WelcomeCard = () => {
                         sx={{ width: 48, height: 48 }} // Slightly larger avatar
                       />
                       <Typography variant="h5" whiteSpace="nowrap">
-                        Welcome back, {userData.fullName}!
+                        Welcome back, {userData.first_name}!
                       </Typography>
                     </Box>
 
-                    {userData.subscriptionStatus === 'unsubscribed' ? (
-                      <Stack spacing={2} direction="row">
+                    {!subscription[0]?.is_active ? (
+                      <Stack
+                        spacing={2}
+                        direction="row"
+                        justifyContent="start"
+                        alignItems="center"
+                        sx={{ mt: -2, ml: 2 }}
+                      >
                         <Box>
-                          <Typography variant="h6">Please select a Subscription!</Typography>
-                          <Link href="/selectSubscriptionPlan" passHref>
+                          <Typography variant="h6" align="center">
+                            Please select a Subscription!
+                          </Typography>
+                          <Link href="/Plans-and-Upgrade" passHref>
                             <Button
                               variant="contained"
                               color="primary"
@@ -95,37 +127,46 @@ const WelcomeCard = () => {
                       </Stack>
                     ) : (
                       <Stack
-                        spacing={2}
+                        spacing={4}
                         direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        sx={{ mt: 6, px: 2 }}
                         divider={<Divider orientation="vertical" flexItem />}
                       >
-                        <Box>
+                        <Box sx={{ flex: 1 }}>
                           <Grid container spacing={2} alignItems="flex-start">
-                            {/* Left Side */}
+                            {/* Left Side: Plan Details */}
                             <Grid item xs={12} sm={4}>
                               <Typography variant="h4" fontWeight={700}>
-                                PRO
+                                <PlanName
+                                  startDate={subscription[0]?.start_date}
+                                  endDate={subscription[0]?.end_date}
+                                />
                               </Typography>
-                              <Typography variant="subtitle1" color="textSecondary">
+                              <Typography variant="subtitle1" sx={{ mt: '4px' }}>
                                 Subscription Details
                               </Typography>
                             </Grid>
 
-                            {/* Right Side */}
-                            <Grid item xs={12} sm={8} md={8}>
-                              <Typography variant="h5" sx={{ mt: '5px' }}>
+                            {/* Right Side: Pricing Details */}
+                            <Grid item xs={12} sm={8}>
+                              <Typography variant="h5">
                                 $
                                 {userData?.paidData?.price
                                   ? (userData?.paidData?.price / 100).toFixed(2)
                                   : '0.00'}{' '}
-                                / month
+                                /{' '}
+                                {getPlanName(
+                                  subscription[0]?.start_date,
+                                  subscription[0]?.end_date,
+                                ) === 'Monthly'
+                                  ? 'month'
+                                  : 'year'}
                               </Typography>
-                              <Typography variant="body1" sx={{ mt: '4px' }}>
+                              <Typography variant="subtitle1" sx={{ mt: '4px' }}>
                                 Next billing date:{' '}
-                                {moment
-                                  .unix(userData?.paidData?.subscriptionEndDate)
-                                  .tz('Asia/Kolkata')
-                                  .format('MMMM D, YYYY')}
+                                {moment(subscription[0]?.end_date).format('DD, MMM YYYY')}
                               </Typography>
                             </Grid>
                           </Grid>

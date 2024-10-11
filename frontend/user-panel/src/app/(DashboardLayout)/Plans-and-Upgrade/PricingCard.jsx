@@ -5,22 +5,74 @@ import Cookies from 'js-cookie';
 const PricingCard = ({ id, plan, price, features, priceSlogan, buttonText, paymentLink }) => {
   const token = Cookies.get('access');
 
-  const handlePayment = async (id) => {
+  const loadScript = () => {
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    document.body.appendChild(script);
+  };
+
+  const handlePaymentSuccess = async (response) => {
     try {
-      console.log('id', id);
-      const razorPayOrder = await axios.post(
-        '/subscribe/create-razorpay-order/',
-        { plan_id: id },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      console.log(response);
+      response.plan_id = id;
+
+      const res = await axios.post('/subscribe/razorpay-callback/', response, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
-      console.log(razorPayOrder.data);
+      });
+      console.log(res.data);
     } catch (error) {
-      console.log(error);
+      console.log(console.error());
     }
+  };
+
+  const showRazorPay = async (id) => {
+    const res = await loadScript();
+
+    const { data } = await axios.post(
+      '/subscribe/create-razorpay-order/',
+      { plan_id: id },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    console.log(data);
+
+    // in data we will receive an object from the backend with the information about the payment
+    //that has been made by the user
+
+    var options = {
+      key_id: process.env.RAZORPAY_PUBLIC_KEY, // in react your environment variable must start with REACT_APP_
+      key_secret: process.env.RAZORPAY_SECRET_KEY,
+      amount: data.amount,
+      currency: 'INR',
+      name: 'Org. Name',
+      description: 'Test teansaction',
+      image: '', // add image url
+      order_id: data.order_id,
+      handler: function (response) {
+        // we will handle success by calling handlePaymentSuccess method and
+        // will pass the response that we've got from razorpay
+        handlePaymentSuccess(response);
+      },
+      // prefill: {
+      //   name: "User's name",
+      //   email: "User's email",
+      //   contact: "User's phone",
+      // },
+      // notes: {
+      //   address: 'Razorpay Corporate Office',
+      // },
+      theme: {
+        color: '#3399cc',
+      },
+    };
+
+    var rzp1 = new window.Razorpay(options);
+    rzp1.open();
   };
 
   return (
@@ -57,7 +109,7 @@ const PricingCard = ({ id, plan, price, features, priceSlogan, buttonText, payme
         <div>
           <button
             onClick={() => {
-              handlePayment(id);
+              showRazorPay(id);
             }}
             className="w-full py-2 text-lg bg-white hover:bg-[#13DEB9] text-black rounded-lg transition-colors duration-300"
           >

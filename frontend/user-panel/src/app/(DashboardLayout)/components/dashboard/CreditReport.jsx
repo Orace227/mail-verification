@@ -20,7 +20,7 @@ dayjs.extend(timezone);
 dayjs.extend(isBetween); // Extend dayjs with the isBetween plugin
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
-const CreditReport = () => {
+const CreditReport = ({ subscription }) => {
   const theme = useTheme();
   const primary = theme.palette.primary.main;
   const [filter, setFilter] = React.useState('yearly');

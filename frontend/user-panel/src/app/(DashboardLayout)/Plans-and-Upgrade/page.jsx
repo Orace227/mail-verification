@@ -20,6 +20,30 @@ import Cookies from 'js-cookie';
 import { useUserData } from '@/store/useUserData';
 import Link from 'next/link';
 import PricingCard from './PricingCard';
+import moment from 'moment';
+
+const PlanName = ({ startDate, endDate }) => {
+  const getPlanName = (startDate, endDate) => {
+    const start = moment(startDate);
+    const end = moment(endDate);
+
+    // Calculate the difference in months and years
+    const monthsDiff = end.diff(start, 'months');
+    const yearsDiff = end.diff(start, 'years');
+
+    if (yearsDiff >= 1) {
+      return 'Yearly';
+    } else if (monthsDiff === 1) {
+      return 'Monthly';
+    } else {
+      return 'Other Plan'; // fallback for other durations
+    }
+  };
+
+  const planName = getPlanName(startDate, endDate);
+
+  return <span>{planName} Plan</span>;
+};
 
 export default function SubscriptionManagement() {
   const [selectedPlan, setSelectedPlan] = useState('free');
@@ -72,7 +96,7 @@ export default function SubscriptionManagement() {
             }
             action={
               <Typography variant="subtitle1" fontWeight="bold">
-                will renew on Oct 30, 2024
+                will renew on {moment(subscription[0].end_date).format('DD, MMM YYYY')}
               </Typography>
             }
           />
@@ -82,14 +106,19 @@ export default function SubscriptionManagement() {
               <div className="flex flex-col items-start space-y-2">
                 <Typography variant="h6" fontWeight="bold" className="flex items-center space-x-2">
                   <EmailOutlined color="primary" />
-                  <span>Free Plan</span>
+                  <PlanName
+                    startDate={subscription[0].start_date}
+                    endDate={subscription[0].end_date}
+                  />
                 </Typography>
               </div>
 
               {/* Email Validations */}
               <div className="flex items-center space-x-2">
                 <EmailOutlined color="primary" />
-                <Typography variant="body2">100 Email Validations</Typography>
+                <Typography variant="body2">
+                  {subscription[0].remaining_credits} Email Validations
+                </Typography>
               </div>
 
               {/* API Key */}
@@ -99,16 +128,16 @@ export default function SubscriptionManagement() {
               </div>
 
               {/* Requests / Team Member */}
-              <div className="flex items-center space-x-2">
+              {/* <div className="flex items-center space-x-2">
                 <PeopleAltOutlined color="primary" />
                 <Typography variant="body2">10 Requests / Min</Typography>
-              </div>
+              </div> */}
 
               {/* Team Members */}
-              <div className="flex items-center space-x-2">
+              {/* <div className="flex items-center space-x-2">
                 <PeopleAltOutlined color="primary" />
                 <Typography variant="body2">1 Team Member</Typography>
-              </div>
+              </div> */}
 
               {/* Support */}
               <div className="flex items-center space-x-2">
