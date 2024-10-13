@@ -40,13 +40,17 @@ export const Profile = () => {
         <>
           <Avatar
             alt="Remy Sharp"
-            src={'/images/profile/user-1.jpg'}
+            src={
+              userData.gender === 'male'
+                ? '/images/profile/user-1.jpg'
+                : '/images/profile/user-9.jpg'
+            }
             sx={{ height: 40, width: 40 }}
           />
 
           <Box>
-            <Typography variant="h6">{userData.fullName}</Typography>
-            {/* <Typography variant="caption">{userData.fullName}</Typography> */}
+            <Typography variant="h6">{userData.first_name}</Typography>
+            <Typography variant="caption">{userData.last_name}</Typography>
           </Box>
           <Box sx={{ ml: 'auto' }}>
             <Tooltip title="Logout" placement="top">

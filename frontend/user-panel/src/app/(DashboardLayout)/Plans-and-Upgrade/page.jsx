@@ -157,7 +157,7 @@ export default function SubscriptionManagement() {
             }
           />
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
               {/* Plan Title and Price */}
               <div className="flex flex-col items-start space-y-2">
                 <Typography variant="h6" fontWeight="bold" className="flex items-center space-x-2">
@@ -185,10 +185,6 @@ export default function SubscriptionManagement() {
               </div>
 
               {/* Team Members */}
-              <div className="flex items-center space-x-2">
-                <PeopleAltOutlined color="primary" />
-                <Typography variant="body2">1 Team Member</Typography>
-              </div>
 
               {/* Support */}
               <div className="flex items-center space-x-2">

@@ -43,17 +43,17 @@ const Menuitems = [
     href: "/myApis",
   },
 
-  // {
-  //   navlabel: true,
-  //   subheader: "Contact",
-  // },
-  // {
+  {
+    navlabel: true,
+    subheader: "Contact",
+  },
+  {
 
-  //   id: uniqueId(),
-  //   title: "Send a mail",
-  //   icon: IconHelp,
-  //   href: "mailto:support@commerciax.com",
-  // },
+    id: uniqueId(),
+    title: "Send a mail",
+    icon: IconHelp,
+    href: "mailto:support@commerciax.com",
+  },
   // {
 
   //   id: uniqueId(),

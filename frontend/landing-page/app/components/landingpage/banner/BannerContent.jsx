@@ -28,8 +28,10 @@ const BannerContent = () => {
         return;
       }
       setShowLoader(true);
+      setError("");
       const res = await axios.post("/check/email-checker/", { email });
       if (res.data) {
+        setEmail("");
         setApiResponse(res.data);
         setShowLoader(false);
       }
@@ -118,6 +120,7 @@ const BannerContent = () => {
                 value={email}
                 onChange={(e) => {
                   setEmail(e.target.value);
+                  setError("");
                 }}
                 fullWidth
                 InputProps={{

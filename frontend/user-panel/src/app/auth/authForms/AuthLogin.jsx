@@ -66,7 +66,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
             Authorization: `Bearer ${res.data.access}`,
           },
         });
-        if (profileEes.data[0].id) {
+        if (profileEes?.data[0]?.id) {
           router.push('/');
         } else {
           router.push('/auth/completeProfile');
