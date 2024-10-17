@@ -13,6 +13,7 @@ import axios from 'axios';
 
 export default function Dashboard() {
   const [subscription, setSubscription] = useState([]);
+  const [creditUsageLog, setCreditUsageLog] = useState({});
   useUserData();
   useEffect(() => {
     const fetchSubscription = async () => {
@@ -27,7 +28,38 @@ export default function Dashboard() {
         setSubscription(sub.data);
       }
     };
+    const fetchCreditUsage = async () => {
+      const token = Cookies.get('access');
+
+      const sub = await axios.get('/subscribe/subscriptions/', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (sub.status === 200) {
+        setSubscription(sub.data);
+      }
+    };
+
     fetchSubscription();
+    fetchCreditUsage();
+  }, []);
+
+  useEffect(() => {
+    const fetchCreditUsage = async () => {
+      const token = Cookies.get('access');
+
+      const sub = await axios.get('/subscribe/credit-usage-logs/', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (sub.status === 200) {
+        setCreditUsageLog(sub.data);
+      }
+    };
+
+    fetchCreditUsage();
   }, []);
 
   return (
@@ -35,13 +67,13 @@ export default function Dashboard() {
       <Box mt={2}>
         <Grid container spacing={3}>
           <Grid item xs={12} lg={12}>
-            <WelcomeCard subscription={subscription} />
+            <WelcomeCard subscription={subscription} creditUsageLog={creditUsageLog} />
           </Grid>
           <Grid item xs={12} lg={12}>
             <CreditReport subscription={subscription} />
           </Grid>
           <Grid item xs={12} lg={12}>
-            <ProductPerformances subscription={subscription} />
+            <ProductPerformances subscription={subscription} creditUsageLog={creditUsageLog} />
           </Grid>
         </Grid>
       </Box>

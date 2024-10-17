@@ -49,7 +49,21 @@ const Page = () => {
           },
         }); // Ensure this API returns consistent data
         if (res.status === 200) {
-          setApiKeys(res.data);
+          if (res.data.length === 0) {
+            const apiKeyRes = await axios.post(
+              '/key/generate-api-key/',
+              {},
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              },
+            );
+            console.log(apiKeyRes.data);
+            setApiKeys(apiKeyRes.data);
+          } else {
+            setApiKeys(res.data);
+          }
         }
       } catch (error) {
         console.log(error);
@@ -94,7 +108,7 @@ const Page = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {apiKeys.map((key) => (
+            {apiKeys?.map((key) => (
               <TableRow key={key.id}>
                 <TableCell sx={{ pl: 0 }}>
                   <Typography variant="subtitle2" fontWeight={600}>

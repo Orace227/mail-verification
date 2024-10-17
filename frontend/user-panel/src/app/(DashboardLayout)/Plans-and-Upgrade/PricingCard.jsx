@@ -14,14 +14,18 @@ const PricingCard = ({ id, plan, price, features, priceSlogan, buttonText, payme
   const handlePaymentSuccess = async (response) => {
     try {
       console.log(response);
-      response.plan_id = id;
+      response.subscription_plan = id;
+      response.payment_method = 'razorpay';
 
-      const res = await axios.post('/subscribe/razorpay-callback/', response, {
+      const res = await axios.post('/subscribe/payment-callback/', response, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       console.log(res.data);
+      if (response.status === 201) {
+        window.location.reload();
+      }
     } catch (error) {
       console.log(console.error());
     }
@@ -31,8 +35,8 @@ const PricingCard = ({ id, plan, price, features, priceSlogan, buttonText, payme
     const res = await loadScript();
 
     const { data } = await axios.post(
-      '/subscribe/create-razorpay-order/',
-      { plan_id: id },
+      '/subscribe/make-payment/',
+      { subscription_plan: id, payment_method: 'razorpay' },
       {
         headers: {
           Authorization: `Bearer ${token}`,

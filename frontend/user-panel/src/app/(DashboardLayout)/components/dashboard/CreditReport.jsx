@@ -1,4 +1,3 @@
-'use client';
 import dynamic from 'next/dynamic';
 import * as React from 'react';
 import { useTheme } from '@mui/material/styles';
@@ -14,105 +13,82 @@ import isBetween from 'dayjs/plugin/isBetween'; // Import the plugin
 import DashboardCard from '../shared/DashboardCard';
 import utc from 'dayjs/plugin/utc'; // Required by the timezone plugin
 import timezone from 'dayjs/plugin/timezone';
+import axios from 'axios';
+import Cookies from 'js-cookie';
 
 dayjs.extend(utc); // Make sure to extend UTC
 dayjs.extend(timezone);
 dayjs.extend(isBetween); // Extend dayjs with the isBetween plugin
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
-const CreditReport = ({ subscription }) => {
+const CreditReport = () => {
   const theme = useTheme();
   const primary = theme.palette.primary.main;
-  const [filter, setFilter] = React.useState('yearly');
-  const [startDate, setStartDate] = React.useState(new Date());
-  const [endDate, setEndDate] = React.useState(new Date());
+  const [filter, setFilter] = React.useState('today');
+  const [period, setPeriod] = React.useState('year');
+  const [startDate, setStartDate] = React.useState(dayjs().startOf('month').format('YYYY-MM-DD'));
+  const [endDate, setEndDate] = React.useState(dayjs().endOf('month').format('YYYY-MM-DD'));
+  const [chartData, setChartData] = React.useState({
+    categories: [],
+    seriesData: [],
+  });
 
-  // Get current date and timezone
-  const today = dayjs().utc().startOf('day').format('YYYY-MM-DDTHH:mm:ss[Z]');
-  console.log(today);
+  const aggregateCredits = (data, period) => {
+    const aggregatedData = {};
 
-  const yesterday = dayjs()
-    .utc()
-    .startOf('day')
-    .subtract(1, 'day')
-    .format('YYYY-MM-DDTHH:mm:ss[Z]');
+    data.forEach((item) => {
+      const date = dayjs(item.created_at);
+      let key;
 
-  const data = {
-    yearly: {
-      categories: [
-        '2024-01-01T00:00:00Z',
-        '2024-01-02T00:00:00Z',
-        '2024-01-03T00:00:00Z',
-        '2024-01-04T00:00:00Z',
-        '2024-01-05T00:00:00Z',
-        '2024-01-06T00:00:00Z',
-        '2024-01-07T00:00:00Z',
-        '2024-01-08T00:00:00Z',
-        '2024-01-09T00:00:00Z',
-        '2024-01-10T00:00:00Z',
-        '2024-01-11T00:00:00Z',
-        '2024-01-12T00:00:00Z',
-      ],
-      seriesData: [10, 30, 20, 50, 40, 60, 70, 90, 80, 100, 110, 120],
-    },
-    monthly: {
-      categories: [
-        '2024-10-01T00:00:00Z',
-        '2024-10-02T00:00:00Z',
-        '2024-10-03T00:00:00Z',
-        '2024-10-04T00:00:00Z',
-        '2024-10-05T00:00:00Z',
-        '2024-10-06T00:00:00Z',
-        '2024-10-07T00:00:00Z',
-        '2024-10-08T00:00:00Z',
-        '2024-10-09T00:00:00Z',
-        '2024-10-10T00:00:00Z',
-      ],
-      seriesData: [10, 15, 20, 25, 30, 35, 40, 45, 50, 55],
-    },
-    custom: {
-      categories: [
-        '2024-09-01T00:00:00Z', // Ensure proper ISO 8601 format with UTC (Z at the end)
-        '2024-09-05T00:00:00Z',
-        '2024-09-10T00:00:00Z',
-        '2024-09-15T00:00:00Z',
-        '2024-09-20T00:00:00Z',
-        '2024-09-25T00:00:00Z',
-        '2024-09-30T00:00:00Z',
-      ],
-      seriesData: [5, 15, 25, 35, 45, 55, 65],
-    },
-    today: {
-      categories: [today],
-      seriesData: [75], // Example data for today
-    },
-    yesterday: {
-      categories: [yesterday],
-      seriesData: [50], // Example data for yesterday
-    },
-  };
-
-  // Filter custom data based on start and end dates
-  const filterCustomData = () => {
-    const selectedData = data[filter];
-    const filteredCategories = [];
-    const filteredSeriesData = [];
-
-    const start = dayjs(startDate).utc(); // Ensure consistent UTC handling
-    const end = dayjs(endDate).utc();
-
-    // Loop through the categories and check if they fall within the selected range
-    selectedData.categories.forEach((category, index) => {
-      const categoryDate = dayjs(category, 'MM/DD/YYYY').utc(); // Parse categories as UTC
-      if (categoryDate.isBetween(start, end, null, '[]')) {
-        filteredCategories.push(category);
-        filteredSeriesData.push(selectedData.seriesData[index]);
+      if (period === 'year') {
+        key = date.format('YYYY'); // Use year as key
+      } else if (period === 'month') {
+        key = date.format('MM-YYYY'); // Use year-month as key
+      } else if (period === 'today') {
+        key = date.format('DD-MM-YYYY'); // Use year-month as key
+      } else if (period === 'yesterday') {
+        key = date.format('DD-MM-YYYY'); // Use year-month as key
       }
-    });
-    console.log({ filteredCategories, filteredSeriesData });
 
-    return { filteredCategories, filteredSeriesData };
+      if (!aggregatedData[key]) {
+        aggregatedData[key] = 0;
+      }
+
+      aggregatedData[key] += item.used_credits; // Sum used credits
+    });
+
+    return aggregatedData;
   };
+
+  // Fetch data from API based on filter
+  const fetchData = async () => {
+    try {
+      const token = Cookies.get('access');
+      const response = await axios.get(
+        `/subscribe/credit-usage-logs?period=${period}&startDate=${startDate}&endDate=${endDate}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const data = response.data.searched_data;
+      const aggregatedData = aggregateCredits(data, filter);
+
+      const categories = Object.keys(aggregatedData);
+      const seriesData = Object.values(aggregatedData);
+
+      setChartData({ categories, seriesData });
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  // Fetch data whenever the filter or date range changes
+  React.useEffect(() => {
+    fetchData();
+  }, [filter, startDate, endDate]);
 
   // Chart options
   const optionsgredientchart = {
@@ -125,9 +101,8 @@ const CreditReport = ({ subscription }) => {
     },
     stroke: { width: 7, curve: 'smooth' },
     xaxis: {
-      type: 'datetime',
-      categories:
-        filter === 'custom' ? filterCustomData().filteredCategories : data[filter].categories,
+      type: 'category', // Use category for x-axis to match year/month
+      categories: chartData.categories,
       labels: { rotate: -45, trim: true },
     },
     fill: {
@@ -143,7 +118,7 @@ const CreditReport = ({ subscription }) => {
       },
     },
     markers: { size: 4, opacity: 0.9, colors: [primary], strokeColor: '#fff', strokeWidth: 2 },
-    yaxis: { min: 0, max: 150 },
+    yaxis: { min: 0, max: Math.max(...chartData.seriesData, 50) }, // Dynamically set max
     tooltip: { theme: 'dark' },
     grid: { show: false },
   };
@@ -152,12 +127,34 @@ const CreditReport = ({ subscription }) => {
   const seriesgredientchart = [
     {
       name: 'Credit Used',
-      data: filter === 'custom' ? filterCustomData().filteredSeriesData : data[filter].seriesData,
+      data: chartData.seriesData,
     },
   ];
 
   // Handle filter change
-  const handleFilterChange = (event) => setFilter(event.target.value);
+  const handleFilterChange = (event) => {
+    const now = dayjs();
+    setFilter(event.target.value);
+
+    // Set start and end dates based on the selected filter
+    if (event.target.value === 'today') {
+      setStartDate(now.format('YYYY-MM-DD'));
+      setEndDate(now.format('YYYY-MM-DD'));
+    } else if (event.target.value === 'yesterday') {
+      setStartDate(now.subtract(1, 'day').format('YYYY-MM-DD'));
+      setEndDate(now.subtract(1, 'day').format('YYYY-MM-DD'));
+    } else if (event.target.value === 'month') {
+      setPeriod(event.target.value);
+      setStartDate(now.startOf('month').format('YYYY-MM-DD'));
+      setEndDate(now.endOf('month').format('YYYY-MM-DD'));
+    } else if (event.target.value === 'year') {
+      setPeriod(event.target.value);
+      setStartDate(now.startOf('year').format('YYYY-MM-DD'));
+      setEndDate(now.endOf('year').format('YYYY-MM-DD'));
+    } else {
+      // For 'custom', keep existing dates
+    }
+  };
 
   return (
     <DashboardCard
@@ -171,8 +168,8 @@ const CreditReport = ({ subscription }) => {
             onChange={handleFilterChange}
             label="Filter"
           >
-            <MenuItem value="yearly">Yearly</MenuItem>
-            <MenuItem value="monthly">Monthly</MenuItem>
+            <MenuItem value="year">Yearly</MenuItem>
+            <MenuItem value="month">Monthly</MenuItem>
             <MenuItem value="custom">Custom</MenuItem>
             <MenuItem value="today">Today</MenuItem>
             <MenuItem value="yesterday">Yesterday</MenuItem>
@@ -185,30 +182,18 @@ const CreditReport = ({ subscription }) => {
                   label="Start Date"
                   views={['year', 'month', 'day']}
                   value={startDate}
-                  onChange={(newValue) => setStartDate(newValue)}
+                  onChange={(newValue) => setStartDate(dayjs(newValue).format('YYYY-MM-DD'))}
                   renderInput={(inputProps) => (
-                    <CustomTextField
-                      fullWidth
-                      variant="outlined"
-                      size="small"
-                      inputProps={{ 'aria-label': 'basic date picker' }}
-                      {...inputProps}
-                    />
+                    <CustomTextField fullWidth {...inputProps} variant="outlined" />
                   )}
                 />
                 <MobileDatePicker
                   label="End Date"
                   views={['year', 'month', 'day']}
                   value={endDate}
-                  onChange={(newValue) => setEndDate(newValue)}
+                  onChange={(newValue) => setEndDate(dayjs(newValue).format('YYYY-MM-DD'))}
                   renderInput={(inputProps) => (
-                    <CustomTextField
-                      fullWidth
-                      variant="outlined"
-                      size="small"
-                      inputProps={{ 'aria-label': 'basic date picker' }}
-                      {...inputProps}
-                    />
+                    <CustomTextField fullWidth {...inputProps} variant="outlined" />
                   )}
                 />
               </LocalizationProvider>
@@ -217,13 +202,7 @@ const CreditReport = ({ subscription }) => {
         </FormControl>
       }
     >
-      <Chart
-        options={optionsgredientchart}
-        series={seriesgredientchart}
-        type="line"
-        height="300px"
-        width="99%"
-      />
+      <Chart options={optionsgredientchart} series={seriesgredientchart} type="line" height={350} />
     </DashboardCard>
   );
 };

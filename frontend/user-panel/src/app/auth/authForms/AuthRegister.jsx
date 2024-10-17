@@ -70,6 +70,7 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
         toast.success(res.data.detail, {
           icon: '🚀',
         });
+        router.push("/auth/login")
       }
     } catch (error) {
       if (error.response.status === 400) {

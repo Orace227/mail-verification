@@ -52,7 +52,11 @@ const Profile = () => {
       >
         <Avatar
           src={
-            userData.gender === 'male' ? '/images/profile/user-1.jpg' : '/images/profile/user-9.jpg'
+            userData.profile_photo
+              ? userData.profile_photo
+              : userData.gender === 'male'
+              ? '/images/profile/user-1.jpg'
+              : '/images/profile/user-9.jpg'
           }
           alt={'ProfileImg'}
           sx={{
@@ -83,7 +87,9 @@ const Profile = () => {
         <Stack direction="row" py={3} spacing={2} alignItems="center">
           <Avatar
             src={
-              userData.gender === 'male'
+              userData.profile_photo
+                ? userData.profile_photo
+                : userData.gender === 'male'
                 ? '/images/profile/user-1.jpg'
                 : '/images/profile/user-9.jpg'
             }
@@ -92,7 +98,7 @@ const Profile = () => {
           />
           <Box>
             <Typography variant="subtitle2" color="textPrimary" fontWeight={600}>
-              {userData.fullName}
+              {userData.first_name} {userData.last_name}
             </Typography>
             {/* <Typography variant="subtitle2" color="textSecondary">
               Designer

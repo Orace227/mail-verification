@@ -112,7 +112,9 @@ const ProfileBanner = ({ userData }) => {
                 <ProfileImage>
                   <Avatar
                     src={
-                      userData.gender === 'male'
+                      userData.profile_photo
+                        ? userData.profile_photo
+                        : userData.gender === 'male'
                         ? '/images/profile/user-1.jpg'
                         : '/images/profile/user-9.jpg'
                     }
@@ -127,7 +129,7 @@ const ProfileBanner = ({ userData }) => {
                 </ProfileImage>
                 <Box mt={1} mb={3}>
                   <Typography fontWeight={600} variant="h5">
-                    {userData.fullName}
+                    {userData.first_name} {userData.last_name}
                   </Typography>
                   <Typography color="textSecondary" variant="h6" mt="4px" fontWeight={400}>
                     {userData.company_name}

@@ -41,7 +41,9 @@ export const Profile = () => {
           <Avatar
             alt="Remy Sharp"
             src={
-              userData.gender === 'male'
+              userData.profile_photo
+                ? userData.profile_photo
+                : userData.gender === 'male'
                 ? '/images/profile/user-1.jpg'
                 : '/images/profile/user-9.jpg'
             }

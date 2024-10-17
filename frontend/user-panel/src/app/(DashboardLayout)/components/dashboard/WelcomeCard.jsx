@@ -39,7 +39,7 @@ const PlanName = ({ startDate, endDate }) => {
   return <span>{planName}</span>;
 };
 
-const WelcomeCard = ({ subscription }) => {
+const WelcomeCard = ({ subscription, creditUsageLog }) => {
   const { userData } = useUserData();
 
   const topcards = [
@@ -52,7 +52,7 @@ const WelcomeCard = ({ subscription }) => {
     {
       icon: '/images/svgs/icon-mailbox.svg',
       title: 'Total Credits Used',
-      digits: '356',
+      digits: creditUsageLog.credit_usage_count || 0,
       bgcolor: 'secondary',
     },
   ];
@@ -88,7 +88,13 @@ const WelcomeCard = ({ subscription }) => {
                       }}
                     >
                       <Avatar
-                        src="/images/profile/user-1.jpg"
+                        src={
+                          userData.profile_photo
+                            ? userData.profile_photo
+                            : userData.gender === 'male'
+                            ? '/images/profile/user-1.jpg'
+                            : '/images/profile/user-9.jpg'
+                        }
                         alt="img"
                         sx={{ width: 48, height: 48 }} // Slightly larger avatar
                       />
